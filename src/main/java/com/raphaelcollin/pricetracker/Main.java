@@ -1,7 +1,7 @@
 package com.raphaelcollin.pricetracker;
 
-import com.raphaelcollin.pricetracker.fetchers.AmazonProductFetcher;
-import com.raphaelcollin.pricetracker.fetchers.ProductFetcher;
+import com.raphaelcollin.pricetracker.product.AmazonProductFetcher;
+import com.raphaelcollin.pricetracker.product.ProductFetcher;
 
 import java.util.Collection;
 import java.util.LinkedList;

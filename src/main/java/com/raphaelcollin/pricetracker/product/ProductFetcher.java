@@ -1,6 +1,4 @@
-package com.raphaelcollin.pricetracker.fetchers;
-
-import com.raphaelcollin.pricetracker.Product;
+package com.raphaelcollin.pricetracker.product;
 
 import java.util.Collection;
 

@@ -1,6 +1,5 @@
-package com.raphaelcollin.pricetracker.fetchers;
+package com.raphaelcollin.pricetracker.product;
 
-import com.raphaelcollin.pricetracker.Product;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
