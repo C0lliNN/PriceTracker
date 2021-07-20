@@ -1,0 +1,24 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>/tmp/logback.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{dd/MM/yyyy HH:mm} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.raphaelcollin.pricetracker">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="file" />
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

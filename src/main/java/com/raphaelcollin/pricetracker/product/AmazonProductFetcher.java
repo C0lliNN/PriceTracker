@@ -1,6 +1,8 @@
 package com.raphaelcollin.pricetracker.product;
 
 import com.raphaelcollin.pricetracker.utils.CustomHttpClient;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,18 +11,18 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
+
+@Slf4j
+@AllArgsConstructor
 public class AmazonProductFetcher implements ProductFetcher {
     private static final String BASE_URL = "https://www.amazon.com.br";
     private static final String PRODUCTS_ROOT_SELECTOR = "s-main-slot s-result-list s-search-results sg-row";
 
     private final CustomHttpClient httpClient;
-
-    public AmazonProductFetcher(final CustomHttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 
     @Override
     public Collection<Product> fetchProducts(final String query) {
@@ -30,16 +32,19 @@ public class AmazonProductFetcher implements ProductFetcher {
             final Document document = Jsoup.parse(response);
             final Element productsRootElement = document.body().getElementsByClass(PRODUCTS_ROOT_SELECTOR).first();
 
-            return Objects.requireNonNull(productsRootElement)
+            final Collection<Product> products = Objects.requireNonNull(productsRootElement)
                     .children()
                     .stream()
                     .map(this::createProductFromDomElement)
                     .filter(Objects::nonNull)
                     .limit(5)
-                    .collect(Collectors.toUnmodifiableList());
+                    .collect(toUnmodifiableList());
+
+            log.info("Found products in Amazon: {}", products);
+            return products;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            log.error("An unexpected error happened when fetching products from Amazon: {}", e.getMessage(), e);
+            return Collections.emptyList();
         }
     }
 
