@@ -1,4 +1,4 @@
-package com.raphaelcollin.pricetracker;
+package com.raphaelcollin.pricetracker.utils;
 
 import java.util.HashMap;
 import java.util.Map;

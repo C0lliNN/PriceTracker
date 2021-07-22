@@ -1,13 +1,15 @@
 package com.raphaelcollin.pricetracker;
 
+import com.raphaelcollin.pricetracker.notification.JSwingNotificationSender;
+import com.raphaelcollin.pricetracker.notification.NotificationSender;
 import com.raphaelcollin.pricetracker.product.AmazonProductFetcher;
 import com.raphaelcollin.pricetracker.product.Product;
 import com.raphaelcollin.pricetracker.product.ProductFetcher;
+import com.raphaelcollin.pricetracker.utils.ArgumentsParser;
 import com.raphaelcollin.pricetracker.utils.CustomHttpClient;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -21,6 +23,15 @@ public class Main {
         final String productQuery = parser.getParameter("product");
         final BigDecimal targetPrice = BigDecimal.valueOf(Double.parseDouble(parser.getParameter("price")));
 
+        final Product cheapestProduct = getCheapestProduct(productQuery);
+
+        if (cheapestProduct.getPrice().compareTo(targetPrice) < 0) {
+            NotificationSender notificationSender = new JSwingNotificationSender();
+            notificationSender.send(cheapestProduct);
+        }
+    }
+
+    private static Product getCheapestProduct(String productQuery) {
         final CustomHttpClient httpClient = new CustomHttpClient();
 
         final Collection<ProductFetcher> productFetchers = new LinkedList<>();
@@ -34,5 +45,7 @@ public class Main {
                 .orElseThrow(() -> new RuntimeException("No products was fetched"));
 
         log.info("Cheapest Product: {}", cheapestProduct);
+
+        return cheapestProduct;
     }
 }

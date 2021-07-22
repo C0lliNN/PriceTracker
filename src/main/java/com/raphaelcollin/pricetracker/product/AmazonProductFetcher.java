@@ -35,7 +35,7 @@ public class AmazonProductFetcher implements ProductFetcher {
             final Collection<Product> products = Objects.requireNonNull(productsRootElement)
                     .children()
                     .stream()
-                    .map(this::createProductFromDomElement)
+                    .map(element -> createProductFromDomElementAndQuery(element, query))
                     .filter(Objects::nonNull)
                     .limit(5)
                     .collect(toUnmodifiableList());
@@ -60,7 +60,7 @@ public class AmazonProductFetcher implements ProductFetcher {
                 .toString();
     }
 
-    private Product createProductFromDomElement(final Element element) {
+    private Product createProductFromDomElementAndQuery(final Element element, final String query) {
         try {
             final String title = element.getElementsByTag("h2").text();
 
@@ -75,6 +75,7 @@ public class AmazonProductFetcher implements ProductFetcher {
                     .title(title)
                     .price(price)
                     .link(productLink)
+                    .query(query)
                     .build();
         } catch (Exception e) {
             return null;
