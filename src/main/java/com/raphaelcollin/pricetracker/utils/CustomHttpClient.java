@@ -6,6 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
 
 public class CustomHttpClient {
     private final HttpClient client;
@@ -17,15 +18,14 @@ public class CustomHttpClient {
                 .build();
     }
 
-    public String executeGetRequest(final String url) throws IOException, InterruptedException {
+    public CompletableFuture<String> executeGetRequest(final String url) {
         final HttpRequest request = HttpRequest
                 .newBuilder()
                 .uri(URI.create(url))
                 .header("User-Agent", "Mozilla/5.0")
                 .build();
 
-        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-
-        return response.body();
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+                .thenApply(HttpResponse::body);
     }
 }

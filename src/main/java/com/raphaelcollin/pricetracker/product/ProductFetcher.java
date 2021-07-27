@@ -1,9 +1,10 @@
 package com.raphaelcollin.pricetracker.product;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface ProductFetcher {
 
-    Collection<Product> fetchProducts(String query);
+    CompletableFuture<List<Product>> fetchProducts(String query);
 
 }

@@ -16,11 +16,11 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
-@Slf4j
 @AllArgsConstructor
-public class AmazonProductFetcher implements ProductFetcher {
-    private static final String BASE_URL = "https://www.amazon.com.br";
-    private static final String PRODUCTS_ROOT_SELECTOR = "s-main-slot s-result-list s-search-results sg-row";
+@Slf4j
+public class PichauProductFetcher implements ProductFetcher {
+    private static final String BASE_URL = "https://www.pichau.com.br";
+    private static final String PRODUCTS_ROOT_SELECTOR = "#__next > main > div:nth-child(2) > div > div > div:nth-child(3)";
 
     private final CustomHttpClient httpClient;
 
@@ -29,7 +29,7 @@ public class AmazonProductFetcher implements ProductFetcher {
         try {
             return httpClient.executeGetRequest(createUrl(query))
                     .thenApply(Jsoup::parse)
-                    .thenApply(document -> document.body().getElementsByClass(PRODUCTS_ROOT_SELECTOR).first())
+                    .thenApply(document -> document.body().selectFirst(PRODUCTS_ROOT_SELECTOR))
                     .thenApply(productsRootElement -> Objects.requireNonNull(productsRootElement)
                             .children()
                             .stream()
@@ -38,36 +38,30 @@ public class AmazonProductFetcher implements ProductFetcher {
                             .filter(Objects::nonNull)
                             .collect(toUnmodifiableList())
                     ).thenApply(products -> {
-                        log.info("Found products in Amazon: {}", products);
+                        log.info("Found products in Pichau: {}", products);
                         return products;
                     });
         } catch (Exception e) {
-            log.error("An unexpected error happened when fetching products from Amazon: {}", e.getMessage(), e);
+            log.error("An unexpected error happened when fetching products from Pichau: {}", e.getMessage(), e);
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
     }
 
     private String createUrl(final String query) {
-        final StringBuilder builder = new StringBuilder(BASE_URL);
-
-        return builder
-                .append("/s?k=")
-                .append(URLEncoder.encode(query, StandardCharsets.UTF_8))
-                .append("&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=130TT54MYLCKG&sprefix=")
-                .append(URLEncoder.encode(query, StandardCharsets.UTF_8))
-                .append("&ref=nb_sb_ss_ts-doa-p_2_11")
-                .toString();
+        return  BASE_URL + "/search?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
     }
 
     private Product createProductFromDomElement(final Element element) {
         try {
             final String title = element.getElementsByTag("h2").text();
 
-            final String rawPrice = element.getElementsByClass("a-price-whole").text();
-            double doublePrice = Double.parseDouble(rawPrice.replace(",", ""));
+            final Element priceContainer = element.selectFirst(".MuiCardContent-root > div > div > div");
+
+            final String rawPrice = priceContainer.child(priceContainer.childrenSize() - 2).text();
+            double doublePrice = Double.parseDouble(rawPrice.replace(",", ".").replace(".", "").replace("R$", ""));
 
             final BigDecimal price = BigDecimal.valueOf(doublePrice);
-            final String productLink = BASE_URL + element.getElementsByTag("a").last().attr("href");
+            final String productLink = BASE_URL + element.getElementsByTag("a").first().attr("href");
 
             return Product
                     .builder()

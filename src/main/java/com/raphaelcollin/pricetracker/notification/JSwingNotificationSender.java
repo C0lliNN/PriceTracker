@@ -18,9 +18,8 @@ public class JSwingNotificationSender implements NotificationSender {
         Box box = Box.createVerticalBox();
         box.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel label = new JLabel(product.getQuery() + " found costing R$ " + product.getPrice());
+        JLabel label = new JLabel(product.getAbbreviatedTitle() + " found costing R$ " + product.getPrice());
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        frame.getContentPane().add(label);
 
         JButton button = new JButton("Show product");
         button.setAlignmentX(Component.CENTER_ALIGNMENT);

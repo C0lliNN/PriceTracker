@@ -12,9 +12,11 @@ public class Product {
     @NonNull
     String title;
     @NonNull
-    String query;
-    @NonNull
     String link;
     @NonNull
     BigDecimal price;
+
+    public String getAbbreviatedTitle() {
+        return title.substring(0, 20);
+    }
 }
