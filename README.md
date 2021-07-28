@@ -21,5 +21,5 @@ The `price` represents the value that will be used to notify the user. If a prod
 * CLI arguments can also be configured directly in most IDEs 
 
 
-## Cool things I've done
+## Cool things I've done 
 * The product fetchers were implemented using the [TemplateMethod](https://en.wikipedia.org/wiki/Template_method_pattern).
