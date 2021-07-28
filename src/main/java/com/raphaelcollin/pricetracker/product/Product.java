@@ -17,6 +17,9 @@ public class Product {
     BigDecimal price;
 
     public String getAbbreviatedTitle() {
+        if (title.length() <= 20) {
+            return title;
+        }
         return title.substring(0, 20);
     }
 }
