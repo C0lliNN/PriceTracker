@@ -11,7 +11,7 @@ public class ArgumentsParser {
 
     public ArgumentsParser(final String[] args) {
         if (args.length % 2 != 0) {
-            throw new IllegalArgumentException(format("The following CLI arguments is not valid: %s", join(" ", args)));
+            throw new IllegalArgumentException(format("The following CLI arguments are not valid: %s", join(" ", args)));
         }
 
         parse(args);
